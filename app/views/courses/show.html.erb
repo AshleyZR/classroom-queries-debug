@@ -1,5 +1,5 @@
 <h1>
-  Course #<%= course.id %> details
+  Course #<%= @course.id %> details
 </h1>
 
 <div>
@@ -22,7 +22,7 @@
       Title
     </label>
 
-    <input type="text" id="title_box" name="query_title">
+    <input type="text" id="title_box" name="query_title" value="<%= @course.title %>">
   </div>
 
   <div>
@@ -34,21 +34,15 @@
   </div>
 
   <div>
-    <label for="department_id_box">
+    <label for="department_box">
       Department
     </label>
 
-    <select id="department_id_box" name="query_department_id">
+    <select id="department_box" name="query_department_id">
       <% Department.order({ :name => :asc }).each do |a_department| %>
-        <% if a_department.id == @course.department_id %>
-          <option value="<%= a_department.id %>" selected>
-            <%= a_department.name %>
-          </option>
-        <% else %>
-          <option value="<%= a_department.id %>">
-            <%= a_department.name %>
-          </option>
-        <% end %>
+        <option value="<%= a_department.id %>">
+          <%= a_department.name %>
+        </option>
       <% end %>
     </select>
   </div>
@@ -65,7 +59,7 @@
     Title
   </dt>
   <dd>
-    <%= course.title %>
+    <%= @course.title %>
   </dd>
 
   <dt>
@@ -79,7 +73,7 @@
     Department
   </dt>
   <dd>
-    <% department = Department.where({ :id => @course.department_id }).at(0) %>
+    <% department = Department.where({ :id => @course.department_id }).first %>
     <a href="/departments/<%= department.id %>"><%= department.name %></a>
   </dd>
 
@@ -87,7 +81,7 @@
     Number of enrolled students
   </dt>
   <dd>
-    <%= enrollment.where({ :course_id => @course.id }) %>
+    <%= Enrollment.where({ :course_id => @course.id }).count %>
   </dd>
 </dl>
 
@@ -96,7 +90,7 @@
 <h2>Roster</h2>
 <ul>
   <% Enrollment.where({ :course_id => @course.id }).each do |enrollment| %>
-    <% student = Student.where({ :id => enrollment.student_id }).at(0) %>
+    <% student = Student.where({ :id => enrollment.student_id }).first %>
     <li>
       <a href="/students/<%= student.id %>">
         <%= student.first_name %> <%= student.last_name %>
